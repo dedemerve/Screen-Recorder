@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EkranKayıt — Öğrenci Kayıt Aracı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0d12;--surface:#13161f;--surface2:#191d29;--surface3:#1f2436;
+  --border:rgba(255,255,255,0.07);--border-hi:rgba(255,255,255,0.13);
+  --txt:#e6eaf4;--txt-muted:#677090;--txt-faint:#30364a;
+  --accent:#4a85f5;--accent-hi:#6b9fff;--accent-glow:rgba(74,133,245,0.18);
+  --danger:#f04f63;--danger-hi:#ff6b7d;--danger-glow:rgba(240,79,99,0.18);
+  --success:#3ecf82;--success-glow:rgba(62,207,130,0.15);
+  --r-sm:10px;--r:16px;--r-lg:22px;--r-xl:28px;
+  --font-d:'DM Serif Display',Georgia,serif;
+  --font-b:'DM Sans',system-ui,sans-serif;
+  --ease:cubic-bezier(0.4,0,0.2,1);
+  --spring:cubic-bezier(0.34,1.56,0.64,1);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:var(--font-b);font-size:15px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+.bg-layer{position:fixed;inset:0;pointer-events:none;z-index:0}
+.bg-layer::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(74,133,245,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(74,133,245,0.025) 1px,transparent 1px);background-size:44px 44px}
+.bg-layer::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 45% at 50% -5%,rgba(74,133,245,0.10) 0%,transparent 65%),radial-gradient(ellipse 40% 30% at 90% 100%,rgba(62,207,130,0.05) 0%,transparent 60%)}
+.site-header{position:relative;z-index:10;width:100%;max-width:700px;padding:30px 28px 0;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--font-d);font-size:1.2rem;display:flex;align-items:center;gap:10px;color:var(--txt)}
+.logo-mark{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px var(--accent-glow);flex-shrink:0}
+.badge{font-size:11px;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;color:var(--txt-muted);background:var(--surface);border:1px solid var(--border);padding:5px 13px;border-radius:99px}
+.main{position:relative;z-index:10;width:100%;max-width:700px;padding:0 28px 80px;display:flex;flex-direction:column;align-items:center;gap:24px}
+.hero{text-align:center;padding:56px 0 12px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+.hero-eyebrow span{width:6px;height:6px;background:var(--accent);border-radius:50%;box-shadow:0 0 8px var(--accent)}
+.hero-title{font-family:var(--font-d);font-size:clamp(2.1rem,5.5vw,3.2rem);line-height:1.12;letter-spacing:-0.025em;color:var(--txt);margin-bottom:18px}
+.hero-title em{font-style:italic;color:var(--accent-hi)}
+.hero-sub{font-size:15.5px;color:var(--txt-muted);font-weight:300;max-width:400px;margin:0 auto;line-height:1.7}
+.pills{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;padding-top:6px;margin-top:20px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--txt-muted);background:var(--surface);border:1px solid var(--border);padding:5px 12px;border-radius:99px}
+.pill svg{opacity:0.6}
+.card{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:26px;box-shadow:0 8px 40px rgba(0,0,0,0.4);display:flex;flex-direction:column;gap:20px;transition:border-color 0.3s var(--ease),box-shadow 0.3s var(--ease)}
+.card.recording{border-color:rgba(240,79,99,0.3);box-shadow:0 8px 40px rgba(0,0,0,0.4),0 0 0 1px rgba(240,79,99,0.12)}
+.status-bar{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--txt-faint);flex-shrink:0;transition:all 0.3s var(--ease)}
+.status-dot.active{background:var(--danger);box-shadow:0 0 0 3px rgba(240,79,99,0.2);animation:blink 1.5s ease-in-out infinite}
+.status-dot.done{background:var(--success);box-shadow:0 0 0 3px rgba(62,207,130,0.2)}
+@keyframes blink{0%,100%{box-shadow:0 0 0 3px rgba(240,79,99,0.2)}50%{box-shadow:0 0 0 7px rgba(240,79,99,0.05)}}
+.status-label{flex:1;font-size:13px;font-weight:500;color:var(--txt-muted)}
+.timer{font-family:var(--font-d);font-size:14px;color:var(--txt-faint);letter-spacing:0.07em;transition:color 0.3s;min-width:40px;text-align:right}
+.timer.active{color:var(--danger)}
+.preview-box{width:100%;aspect-ratio:16/9;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;position:relative}
+.preview-box video{width:100%;height:100%;object-fit:contain;display:none}
+.preview-box video.show{display:block}
+.preview-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--txt-faint);font-size:13px;text-align:center;padding:24px}
+.preview-icon-wrap{width:56px;height:56px;background:var(--surface3);border:1px solid var(--border);border-radius:var(--r);display:flex;align-items:center;justify-content:center}
+.preview-icon-wrap svg{opacity:0.35}
+.preview-placeholder p{opacity:0.45;max-width:220px;line-height:1.5}
+.controls{display:flex;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-b);font-size:14px;font-weight:600;border:none;border-radius:var(--r-sm);cursor:pointer;padding:13px 20px;transition:all 0.2s var(--ease);letter-spacing:0.01em;text-decoration:none;white-space:nowrap}
+.btn:active{transform:scale(0.97)}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
+.btn-primary{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 20px var(--accent-glow)}
+.btn-primary:hover:not(:disabled){background:var(--accent-hi);box-shadow:0 6px 24px rgba(74,133,245,0.4);transform:translateY(-1px)}
+.btn-danger{background:var(--danger);color:#fff;flex:1;box-shadow:0 4px 20px var(--danger-glow)}
+.btn-danger:hover{background:var(--danger-hi);box-shadow:0 6px 24px rgba(240,79,99,0.4);transform:translateY(-1px)}
+.btn-success{background:var(--success);color:#071a0f;font-weight:700;box-shadow:0 4px 20px var(--success-glow);padding:13px 22px}
+.btn-success:hover{background:#4fdfa0;box-shadow:0 6px 24px rgba(62,207,130,0.35);transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--txt-muted);border:1px solid var(--border);padding:11px 20px;font-size:13.5px;font-weight:500}
+.btn-outline:hover{border-color:var(--border-hi);color:var(--txt);background:var(--surface2)}
+.mic-row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:border-color 0.2s;user-select:none}
+.mic-row:hover{border-color:var(--border-hi)}
+.mic-row input{position:absolute;opacity:0;width:0}
+.mic-info{display:flex;align-items:center;gap:10px}
+.mic-icon{width:32px;height:32px;background:var(--surface3);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--txt-muted);flex-shrink:0}
+.mic-text{font-size:13px;font-weight:500;color:var(--txt-muted)}
+.mic-sub{font-size:11.5px;color:var(--txt-faint);margin-top:1px}
+.toggle{width:42px;height:24px;background:var(--txt-faint);border-radius:99px;position:relative;flex-shrink:0;transition:background 0.25s}
+.mic-row input:checked~.toggle{background:var(--accent)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.3);transition:transform 0.25s var(--spring)}
+.mic-row input:checked~.toggle::after{transform:translateX(18px)}
+.download-section{width:100%;display:flex;flex-direction:column;align-items:center;gap:14px;animation:rise 0.4s var(--spring)}
+@keyframes rise{from{opacity:0;transform:translateY(14px) scale(0.98)}to{opacity:1;transform:none}}
+.download-card{width:100%;background:var(--surface);border:1px solid rgba(62,207,130,0.22);border-radius:var(--r-xl);padding:22px 24px;display:flex;align-items:center;gap:16px;box-shadow:0 0 0 1px rgba(62,207,130,0.07),0 8px 32px rgba(0,0,0,0.35)}
+.dl-icon{width:50px;height:50px;background:rgba(62,207,130,0.1);border:1px solid rgba(62,207,130,0.2);border-radius:var(--r);display:flex;align-items:center;justify-content:center;color:var(--success);flex-shrink:0}
+.dl-text{flex:1;min-width:0}
+.dl-title{font-size:14.5px;font-weight:600;color:var(--txt)}
+.dl-meta{font-size:12.5px;color:var(--txt-muted);margin-top:3px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;animation:fade 0.2s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{background:var(--surface);border:1px solid var(--border-hi);border-radius:var(--r-xl);padding:40px 34px 34px;max-width:400px;width:100%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.65);animation:pop 0.3s var(--spring)}
+@keyframes pop{from{transform:translateY(16px) scale(0.96)}to{transform:none}}
+.modal-emoji{font-size:2.4rem;margin-bottom:14px}
+.modal h2{font-family:var(--font-d);font-size:1.35rem;margin-bottom:10px}
+.modal p{font-size:13.5px;color:var(--txt-muted);line-height:1.65;margin-bottom:28px}
+.site-footer{position:relative;z-index:10;font-size:12px;color:var(--txt-faint);padding:0 24px 28px;text-align:center;letter-spacing:0.01em;line-height:1.8}
+.hidden{display:none!important}
+@media(max-width:480px){.site-header{padding:20px 18px 0}.main{padding:0 18px 60px}.hero{padding:40px 0 8px}.card{padding:18px}.download-card{flex-wrap:wrap}.dl-icon{display:none}.controls{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="bg-layer"></div>
+
+<header class="site-header">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2">
+        <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="#fff" stroke="none"/>
+      </svg>
+    </div>
+    EkranKayıt
+  </div>
+  <div class="badge">Ücretsiz · Kayıtsız · Sınırsız</div>
+</header>
+
+<main class="main">
+  <section class="hero">
+    <div class="hero-eyebrow"><span></span>Öğrenci Kayıt Aracı</div>
+    <h1 class="hero-title">Çözüm sürecini<br/><em>kaydet, paylaş.</em></h1>
+    <p class="hero-sub">Eklenti yok. Hesap yok. Sadece bir tıkla ekranını ve sesini kaydet.</p>
+    <div class="pills">
+      <div class="pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Sunucuya veri gönderilmez
+      </div>
+      <div class="pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Süre sınırı yok
+      </div>
+      <div class="pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        WebRTC tabanlı
+      </div>
+    </div>
+  </section>
+
+  <div class="card" id="recorderCard">
+    <div class="status-bar">
+      <div class="status-dot" id="statusDot"></div>
+      <span class="status-label" id="statusLabel">Kayıt başlamayı bekliyor</span>
+      <span class="timer" id="timer">00:00</span>
+    </div>
+
+    <div class="preview-box">
+      <video id="previewVideo" muted autoplay playsinline></video>
+      <div class="preview-placeholder" id="previewPlaceholder">
+        <div class="preview-icon-wrap">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+            <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+          </svg>
+        </div>
+        <p>Kayıt başladığında ekran önizlemesi burada görünür</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-primary" id="startBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3.5" fill="currentColor" stroke="none"/>
+        </svg>
+        Kayda Başla
+      </button>
+      <button class="btn btn-danger hidden" id="stopBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <rect x="4" y="4" width="16" height="16" rx="3" fill="currentColor" stroke="none"/>
+        </svg>
+        Kaydı Durdur
+      </button>
+    </div>
+
+    <label class="mic-row" id="micRow">
+      <input type="checkbox" id="micCheck" checked />
+      <div class="mic-info">
+        <div class="mic-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="22"/>
+          </svg>
+        </div>
+        <div>
+          <div class="mic-text">Mikrofon kaydını dahil et</div>
+          <div class="mic-sub">Konuşman videoyla birlikte kaydedilir</div>
+        </div>
+      </div>
+      <div class="toggle"></div>
+    </label>
+  </div>
+
+  <div class="download-section hidden" id="downloadSection">
+    <div class="download-card">
+      <div class="dl-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+      </div>
+      <div class="dl-text">
+        <div class="dl-title">Kaydın hazır! 🎉</div>
+        <div class="dl-meta" id="dlMeta">—</div>
+      </div>
+      <a class="btn btn-success" id="downloadBtn" download="ekran-kaydi.webm">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        İndir
+      </a>
+    </div>
+    <button class="btn btn-outline" id="newRecordBtn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="1 4 1 10 7 10"/>
+        <path d="M3.51 15a9 9 0 1 0 .49-4.5"/>
+      </svg>
+      Yeni Kayıt Başlat
+    </button>
+  </div>
+</main>
+
+<footer class="site-footer">
+  Tamamen tarayıcınızda çalışır &nbsp;·&nbsp; Hiçbir veri sunucuya gönderilmez<br/>
+  WebRTC &amp; MediaRecorder API &nbsp;·&nbsp; Chrome · Edge · Firefox
+</footer>
+
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-emoji" id="modalEmoji">⚠️</div>
+    <h2 id="modalTitle">Bir sorun oluştu</h2>
+    <p id="modalBody">Açıklama burada görünür.</p>
+    <button class="btn btn-primary" id="modalClose" style="width:100%">Tamam, anladım</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+const state={recorder:null,chunks:[],screenStream:null,micStream:null,combinedStream:null,timerInterval:null,startTime:null,eventLog:[]};
+const $=(id)=>document.getElementById(id);
+const show=(id)=>$(id).classList.remove('hidden');
+const hide=(id)=>$(id).classList.add('hidden');
+
+function logEvent(name,detail={}){
+  const e={event:name,timestamp:new Date().toISOString(),elapsed:state.startTime?((Date.now()-state.startTime)/1000).toFixed(2)+'s':null,...detail};
+  state.eventLog.push(e);
+  console.log('%c[EkranKayıt]','color:#4a85f5;font-weight:bold',e);
+}
+
+function showModal({emoji='⚠️',title='Bir sorun oluştu',body=''}){
+  $('modalEmoji').textContent=emoji;$('modalTitle').textContent=title;$('modalBody').textContent=body;show('modalOverlay');
+}
+function closeModal(){hide('modalOverlay');}
+
+function startTimer(){
+  state.startTime=Date.now();
+  $('timer').classList.add('active');
+  state.timerInterval=setInterval(()=>{
+    const s=Math.floor((Date.now()-state.startTime)/1000);
+    $('timer').textContent=`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+  },1000);
+}
+function stopTimer(){clearInterval(state.timerInterval);$('timer').classList.remove('active');}
+
+function setUI(mode){
+  const dot=$('statusDot'),label=$('statusLabel'),card=$('recorderCard'),mic=$('micRow');
+  if(mode==='idle'){dot.className='status-dot';label.textContent='Kayıt başlamayı bekliyor';card.classList.remove('recording');show('startBtn');hide('stopBtn');mic.style.cssText='';}
+  if(mode==='recording'){dot.className='status-dot active';label.textContent='Kayıt devam ediyor…';card.classList.add('recording');hide('startBtn');show('stopBtn');mic.style.opacity='0.4';mic.style.pointerEvents='none';}
+  if(mode==='done'){dot.className='status-dot done';label.textContent='Kayıt tamamlandı';card.classList.remove('recording');hide('startBtn');hide('stopBtn');mic.style.cssText='';}
+}
+
+function getMime(){
+  const c=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm;codecs=h264,opus','video/webm'];
+  return c.find(t=>MediaRecorder.isTypeSupported(t))||'video/webm';
+}
+
+function datestamp(){
+  const d=new Date();
+  return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+function cleanup(){
+  [state.screenStream,state.micStream,state.combinedStream].forEach(s=>{if(s)s.getTracks().forEach(t=>t.stop());});
+  state.screenStream=state.micStream=state.combinedStream=null;
+}
+
+async function startRecording(){
+  logEvent('start_btn_click');
+  let screenStream;
+  try{
+    screenStream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:{ideal:30,max:60}},audio:true});
+    logEvent('screen_granted');
+  }catch(e){
+    logEvent('screen_denied',{err:e.message});
+    showModal({emoji:'🖥️',title:'Ekran paylaşımı reddedildi',body:'Kaydı başlatmak için ekran paylaşımına izin vermen gerekiyor. Lütfen tekrar dene ve "Paylaş" butonuna tıkla.'});
+    return;
+  }
+  let micStream=null;
+  if($('micCheck').checked){
+    try{
+      micStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true},video:false});
+      logEvent('mic_granted');
+    }catch(e){
+      logEvent('mic_denied',{err:e.message});
+      showModal({emoji:'🎙️',title:'Mikrofon erişimi reddedildi',body:'Mikrofon iznin olmadığından sadece ekran kaydedilecek. Sesli kayıt için tarayıcı ayarlarından mikrofon iznini etkinleştir.'});
+    }
+  }
+  const tracks=[...screenStream.getVideoTracks(),...screenStream.getAudioTracks(),...(micStream?micStream.getAudioTracks():[])];
+  const combined=new MediaStream(tracks);
+  state.screenStream=screenStream;state.micStream=micStream;state.combinedStream=combined;state.chunks=[];
+  let recorder;
+  try{recorder=new MediaRecorder(combined,{mimeType:getMime(),videoBitsPerSecond:4000000});}
+  catch(e){
+    logEvent('recorder_init_error',{err:e.message});
+    showModal({emoji:'❌',title:'Kayıt başlatılamadı',body:'Tarayıcın bu formatı desteklemiyor. Lütfen güncel Chrome, Edge veya Firefox kullan.'});
+    cleanup();return;
+  }
+  recorder.ondataavailable=(e)=>{if(e.data?.size>0)state.chunks.push(e.data);};
+  recorder.onstop=onStop;
+  screenStream.getVideoTracks()[0].addEventListener('ended',()=>{
+    logEvent('share_ended_by_user');
+    if(state.recorder?.state==='recording')stopRecording();
+  });
+  recorder.start(1000);
+  state.recorder=recorder;
+  const vid=$('previewVideo');
+  vid.srcObject=screenStream;vid.classList.add('show');
+  $('previewPlaceholder').classList.add('hidden');
+  setUI('recording');startTimer();logEvent('recording_started');
+}
+
+function stopRecording(){
+  logEvent('stop_btn_click');
+  if(state.recorder?.state!=='inactive')state.recorder.stop();
+  stopTimer();cleanup();
+  const vid=$('previewVideo');vid.srcObject=null;vid.classList.remove('show');
+  $('previewPlaceholder').classList.remove('hidden');
+  setUI('done');
+}
+
+function onStop(){
+  const mime=getMime();
+  const blob=new Blob(state.chunks,{type:mime});
+  const url=URL.createObjectURL(blob);
+  const elapsed=state.startTime?Math.floor((Date.now()-state.startTime)/1000):0;
+  const m=String(Math.floor(elapsed/60)).padStart(2,'0'),s=String(elapsed%60).padStart(2,'0');
+  const mb=(blob.size/1048576).toFixed(1);
+  logEvent('recording_done',{durationSec:elapsed,sizeMB:mb});
+  $('dlMeta').textContent=`${m}:${s} dakika · ${mb} MB · WebM`;
+  const a=$('downloadBtn');a.href=url;a.download=`ekran-kaydi-${datestamp()}.webm`;
+  show('downloadSection');
+}
+
+function reset(){
+  logEvent('reset');
+  const a=$('downloadBtn');
+  if(a.href?.startsWith('blob:'))URL.revokeObjectURL(a.href);
+  state.chunks=[];state.recorder=null;state.startTime=null;state.eventLog=[];
+  $('timer').textContent='00:00';hide('downloadSection');show('startBtn');setUI('idle');
+}
+
+function checkSupport(){
+  if(!navigator.mediaDevices?.getDisplayMedia||!window.MediaRecorder){
+    showModal({emoji:'🌐',title:'Tarayıcı desteklenmiyor',body:'Ekran kaydı için Chrome 72+, Edge 79+ veya Firefox 66+ gereklidir. Lütfen tarayıcını güncelle.'});
+    $('startBtn').disabled=true;return false;
+  }
+  return true;
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  if(!checkSupport())return;
+  $('startBtn').addEventListener('click',startRecording);
+  $('stopBtn').addEventListener('click',stopRecording);
+  $('newRecordBtn').addEventListener('click',reset);
+  $('modalClose').addEventListener('click',closeModal);
+  $('modalOverlay').addEventListener('click',(e)=>{if(e.target===$('modalOverlay'))closeModal();});
+  document.addEventListener('keydown',(e)=>{if(e.key==='Escape')closeModal();});
+  logEvent('app_ready');
+  console.log('%cEkranKayıt hazır 🎬','color:#3ecf82;font-weight:bold');
+});
+</script>
+</body>
+</html>
