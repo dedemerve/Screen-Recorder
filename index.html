@@ -1,367 +1,484 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>EkranKayıt — Öğrenci Kayıt Aracı</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>RecordFlow — Öğrenci Performans Kayıt Sistemi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0b0d12;--surface:#13161f;--surface2:#191d29;--surface3:#1f2436;
-  --border:rgba(255,255,255,0.07);--border-hi:rgba(255,255,255,0.13);
-  --txt:#e6eaf4;--txt-muted:#677090;--txt-faint:#30364a;
-  --accent:#4a85f5;--accent-hi:#6b9fff;--accent-glow:rgba(74,133,245,0.18);
-  --danger:#f04f63;--danger-hi:#ff6b7d;--danger-glow:rgba(240,79,99,0.18);
-  --success:#3ecf82;--success-glow:rgba(62,207,130,0.15);
-  --r-sm:10px;--r:16px;--r-lg:22px;--r-xl:28px;
-  --font-d:'DM Serif Display',Georgia,serif;
-  --font-b:'DM Sans',system-ui,sans-serif;
-  --ease:cubic-bezier(0.4,0,0.2,1);
-  --spring:cubic-bezier(0.34,1.56,0.64,1);
+  --bg:#08090d;
+  --s1:#0f1117;--s2:#141720;--s3:#1a1f2e;
+  --brd:rgba(255,255,255,0.06);--brd2:rgba(255,255,255,0.11);
+  --txt:#dde2f0;--muted:#5a6180;--faint:#272c3c;
+  --a:#3d7ef6;--ah:#5d96ff;--ag:rgba(61,126,246,0.15);
+  --d:#e8455a;--dh:#ff5f72;--dg:rgba(232,69,90,0.14);
+  --g:#2dba76;--gg:rgba(45,186,118,0.13);
+  --fd:'Instrument Serif',Georgia,serif;
+  --fb:'Inter',system-ui,sans-serif;
+  --ease:cubic-bezier(.4,0,.2,1);
+  --spring:cubic-bezier(.34,1.56,.64,1);
 }
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--txt);font-family:var(--font-b);font-size:15px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
-.bg-layer{position:fixed;inset:0;pointer-events:none;z-index:0}
-.bg-layer::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(74,133,245,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(74,133,245,0.025) 1px,transparent 1px);background-size:44px 44px}
-.bg-layer::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 45% at 50% -5%,rgba(74,133,245,0.10) 0%,transparent 65%),radial-gradient(ellipse 40% 30% at 90% 100%,rgba(62,207,130,0.05) 0%,transparent 60%)}
-.site-header{position:relative;z-index:10;width:100%;max-width:700px;padding:30px 28px 0;display:flex;align-items:center;justify-content:space-between}
-.logo{font-family:var(--font-d);font-size:1.2rem;display:flex;align-items:center;gap:10px;color:var(--txt)}
-.logo-mark{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px var(--accent-glow);flex-shrink:0}
-.badge{font-size:11px;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;color:var(--txt-muted);background:var(--surface);border:1px solid var(--border);padding:5px 13px;border-radius:99px}
-.main{position:relative;z-index:10;width:100%;max-width:700px;padding:0 28px 80px;display:flex;flex-direction:column;align-items:center;gap:24px}
-.hero{text-align:center;padding:56px 0 12px}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
-.hero-eyebrow span{width:6px;height:6px;background:var(--accent);border-radius:50%;box-shadow:0 0 8px var(--accent)}
-.hero-title{font-family:var(--font-d);font-size:clamp(2.1rem,5.5vw,3.2rem);line-height:1.12;letter-spacing:-0.025em;color:var(--txt);margin-bottom:18px}
-.hero-title em{font-style:italic;color:var(--accent-hi)}
-.hero-sub{font-size:15.5px;color:var(--txt-muted);font-weight:300;max-width:400px;margin:0 auto;line-height:1.7}
-.pills{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;padding-top:6px;margin-top:20px}
-.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--txt-muted);background:var(--surface);border:1px solid var(--border);padding:5px 12px;border-radius:99px}
-.pill svg{opacity:0.6}
-.card{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:26px;box-shadow:0 8px 40px rgba(0,0,0,0.4);display:flex;flex-direction:column;gap:20px;transition:border-color 0.3s var(--ease),box-shadow 0.3s var(--ease)}
-.card.recording{border-color:rgba(240,79,99,0.3);box-shadow:0 8px 40px rgba(0,0,0,0.4),0 0 0 1px rgba(240,79,99,0.12)}
-.status-bar{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r)}
-.status-dot{width:8px;height:8px;border-radius:50%;background:var(--txt-faint);flex-shrink:0;transition:all 0.3s var(--ease)}
-.status-dot.active{background:var(--danger);box-shadow:0 0 0 3px rgba(240,79,99,0.2);animation:blink 1.5s ease-in-out infinite}
-.status-dot.done{background:var(--success);box-shadow:0 0 0 3px rgba(62,207,130,0.2)}
-@keyframes blink{0%,100%{box-shadow:0 0 0 3px rgba(240,79,99,0.2)}50%{box-shadow:0 0 0 7px rgba(240,79,99,0.05)}}
-.status-label{flex:1;font-size:13px;font-weight:500;color:var(--txt-muted)}
-.timer{font-family:var(--font-d);font-size:14px;color:var(--txt-faint);letter-spacing:0.07em;transition:color 0.3s;min-width:40px;text-align:right}
-.timer.active{color:var(--danger)}
-.preview-box{width:100%;aspect-ratio:16/9;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;position:relative}
-.preview-box video{width:100%;height:100%;object-fit:contain;display:none}
-.preview-box video.show{display:block}
-.preview-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--txt-faint);font-size:13px;text-align:center;padding:24px}
-.preview-icon-wrap{width:56px;height:56px;background:var(--surface3);border:1px solid var(--border);border-radius:var(--r);display:flex;align-items:center;justify-content:center}
-.preview-icon-wrap svg{opacity:0.35}
-.preview-placeholder p{opacity:0.45;max-width:220px;line-height:1.5}
+body{background:var(--bg);color:var(--txt);font-family:var(--fb);font-size:15px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+
+/* ── AMBIENT ── */
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.ambient::before{content:'';position:absolute;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(61,126,246,.07) 0%,transparent 70%);top:-300px;left:50%;transform:translateX(-50%)}
+.ambient::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:52px 52px}
+
+/* ── HEADER ── */
+header{position:relative;z-index:10;width:100%;max-width:760px;padding:32px 32px 0;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:11px}
+.brand-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--a),#6b5ef8);border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px var(--ag);flex-shrink:0}
+.brand-name{font-family:var(--fd);font-size:1.18rem;letter-spacing:-.01em;color:var(--txt)}
+.brand-name sup{font-family:var(--fb);font-size:9px;font-weight:600;color:var(--a);letter-spacing:.06em;text-transform:uppercase;vertical-align:super;margin-left:3px}
+.nav-tag{font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--s1);border:1px solid var(--brd);padding:6px 14px;border-radius:99px}
+
+/* ── MAIN ── */
+main{position:relative;z-index:10;width:100%;max-width:760px;padding:0 32px 90px;display:flex;flex-direction:column;align-items:center;gap:28px}
+
+/* ── HERO ── */
+.hero{width:100%;text-align:center;padding:64px 0 4px;display:flex;flex-direction:column;align-items:center;gap:0}
+.hero-label{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--a);margin-bottom:22px;padding:5px 14px;background:rgba(61,126,246,.08);border:1px solid rgba(61,126,246,.18);border-radius:99px}
+.hero-label i{width:5px;height:5px;border-radius:50%;background:var(--a);flex-shrink:0;animation:glow 2s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 6px var(--a)}50%{box-shadow:0 0 14px var(--a),0 0 24px rgba(61,126,246,.4)}}
+.hero h1{font-family:var(--fd);font-size:clamp(2.4rem,5.5vw,3.6rem);line-height:1.08;letter-spacing:-.03em;color:var(--txt);margin-bottom:20px;max-width:600px}
+.hero h1 em{font-style:italic;background:linear-gradient(135deg,var(--ah),#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-desc{font-size:16px;color:var(--muted);font-weight:300;max-width:420px;line-height:1.75;margin-bottom:36px}
+
+/* ── STAT ROW ── */
+.stat-row{display:flex;align-items:center;gap:0;background:var(--s1);border:1px solid var(--brd);border-radius:14px;overflow:hidden;margin-bottom:0;width:100%;max-width:480px}
+.stat{flex:1;padding:16px 20px;text-align:center;border-right:1px solid var(--brd)}
+.stat:last-child{border-right:none}
+.stat-val{font-family:var(--fd);font-size:1.5rem;color:var(--txt);line-height:1}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:.02em}
+
+/* ── DIVIDER ── */
+.divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--brd2),transparent);margin:4px 0}
+
+/* ── RECORDER CARD ── */
+.rcard{width:100%;background:var(--s1);border:1px solid var(--brd);border-radius:24px;padding:28px;box-shadow:0 12px 48px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:22px;transition:border-color .3s var(--ease),box-shadow .3s var(--ease)}
+.rcard.rec{border-color:rgba(232,69,90,.28);box-shadow:0 12px 48px rgba(0,0,0,.45),0 0 0 1px rgba(232,69,90,.1),0 0 48px rgba(232,69,90,.05)}
+
+/* ── STATUS BAR ── */
+.sbar{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--s2);border:1px solid var(--brd);border-radius:12px}
+.sdot{width:8px;height:8px;border-radius:50%;background:var(--faint);flex-shrink:0;transition:all .3s var(--ease)}
+.sdot.active{background:var(--d);box-shadow:0 0 0 3px var(--dg);animation:pulse 1.6s ease-in-out infinite}
+.sdot.done{background:var(--g);box-shadow:0 0 0 3px var(--gg)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px var(--dg)}50%{box-shadow:0 0 0 8px rgba(232,69,90,.04)}}
+.slabel{flex:1;font-size:12.5px;font-weight:500;color:var(--muted)}
+.stimer{font-family:var(--fd);font-size:15px;color:var(--faint);letter-spacing:.07em;transition:color .3s;min-width:42px;text-align:right}
+.stimer.on{color:var(--d)}
+
+/* ── PREVIEW ── */
+.preview{width:100%;aspect-ratio:16/9;background:var(--s2);border:1px solid var(--brd);border-radius:16px;overflow:hidden;position:relative}
+.preview video{width:100%;height:100%;object-fit:contain;display:none}
+.preview video.on{display:block}
+.prev-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.prev-icon{width:64px;height:64px;background:var(--s3);border:1px solid var(--brd);border-radius:16px;display:flex;align-items:center;justify-content:center;opacity:.5}
+.prev-empty p{font-size:13px;color:var(--muted);opacity:.5;max-width:240px;text-align:center;line-height:1.5}
+
+/* ── AUDIO VIZ ── */
+.audio-viz{display:none;align-items:center;justify-content:center;gap:3px;height:32px}
+.audio-viz.on{display:flex}
+.bar{width:3px;border-radius:99px;background:var(--d);opacity:.7;transform-origin:bottom;animation:wavebar 1s ease-in-out infinite}
+.bar:nth-child(1){height:8px;animation-delay:0s}
+.bar:nth-child(2){height:16px;animation-delay:.1s}
+.bar:nth-child(3){height:24px;animation-delay:.2s}
+.bar:nth-child(4){height:18px;animation-delay:.15s}
+.bar:nth-child(5){height:12px;animation-delay:.05s}
+.bar:nth-child(6){height:20px;animation-delay:.25s}
+.bar:nth-child(7){height:10px;animation-delay:.08s}
+@keyframes wavebar{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+
+/* ── CONTROLS ── */
 .controls{display:flex;gap:10px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-b);font-size:14px;font-weight:600;border:none;border-radius:var(--r-sm);cursor:pointer;padding:13px 20px;transition:all 0.2s var(--ease);letter-spacing:0.01em;text-decoration:none;white-space:nowrap}
-.btn:active{transform:scale(0.97)}
-.btn:disabled{opacity:0.4;cursor:not-allowed}
-.btn-primary{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 20px var(--accent-glow)}
-.btn-primary:hover:not(:disabled){background:var(--accent-hi);box-shadow:0 6px 24px rgba(74,133,245,0.4);transform:translateY(-1px)}
-.btn-danger{background:var(--danger);color:#fff;flex:1;box-shadow:0 4px 20px var(--danger-glow)}
-.btn-danger:hover{background:var(--danger-hi);box-shadow:0 6px 24px rgba(240,79,99,0.4);transform:translateY(-1px)}
-.btn-success{background:var(--success);color:#071a0f;font-weight:700;box-shadow:0 4px 20px var(--success-glow);padding:13px 22px}
-.btn-success:hover{background:#4fdfa0;box-shadow:0 6px 24px rgba(62,207,130,0.35);transform:translateY(-1px)}
-.btn-outline{background:transparent;color:var(--txt-muted);border:1px solid var(--border);padding:11px 20px;font-size:13.5px;font-weight:500}
-.btn-outline:hover{border-color:var(--border-hi);color:var(--txt);background:var(--surface2)}
-.mic-row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:border-color 0.2s;user-select:none}
-.mic-row:hover{border-color:var(--border-hi)}
-.mic-row input{position:absolute;opacity:0;width:0}
-.mic-info{display:flex;align-items:center;gap:10px}
-.mic-icon{width:32px;height:32px;background:var(--surface3);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--txt-muted);flex-shrink:0}
-.mic-text{font-size:13px;font-weight:500;color:var(--txt-muted)}
-.mic-sub{font-size:11.5px;color:var(--txt-faint);margin-top:1px}
-.toggle{width:42px;height:24px;background:var(--txt-faint);border-radius:99px;position:relative;flex-shrink:0;transition:background 0.25s}
-.mic-row input:checked~.toggle{background:var(--accent)}
-.toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.3);transition:transform 0.25s var(--spring)}
-.mic-row input:checked~.toggle::after{transform:translateX(18px)}
-.download-section{width:100%;display:flex;flex-direction:column;align-items:center;gap:14px;animation:rise 0.4s var(--spring)}
-@keyframes rise{from{opacity:0;transform:translateY(14px) scale(0.98)}to{opacity:1;transform:none}}
-.download-card{width:100%;background:var(--surface);border:1px solid rgba(62,207,130,0.22);border-radius:var(--r-xl);padding:22px 24px;display:flex;align-items:center;gap:16px;box-shadow:0 0 0 1px rgba(62,207,130,0.07),0 8px 32px rgba(0,0,0,0.35)}
-.dl-icon{width:50px;height:50px;background:rgba(62,207,130,0.1);border:1px solid rgba(62,207,130,0.2);border-radius:var(--r);display:flex;align-items:center;justify-content:center;color:var(--success);flex-shrink:0}
-.dl-text{flex:1;min-width:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-size:14px;font-weight:600;border:none;border-radius:10px;cursor:pointer;padding:13px 22px;transition:all .2s var(--ease);letter-spacing:.01em;text-decoration:none;white-space:nowrap;position:relative}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-start{background:var(--a);color:#fff;flex:1;box-shadow:0 4px 20px var(--ag)}
+.btn-start:hover:not(:disabled){background:var(--ah);box-shadow:0 6px 28px rgba(61,126,246,.4);transform:translateY(-1px)}
+.btn-stop{background:var(--d);color:#fff;flex:1;box-shadow:0 4px 20px var(--dg)}
+.btn-stop:hover{background:var(--dh);box-shadow:0 6px 28px rgba(232,69,90,.4);transform:translateY(-1px)}
+.btn-dl{background:var(--g);color:#04150d;font-weight:700;box-shadow:0 4px 20px var(--gg);padding:13px 24px}
+.btn-dl:hover{background:#3dd88a;box-shadow:0 6px 28px rgba(45,186,118,.35);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--brd);padding:11px 20px;font-size:13.5px;font-weight:500}
+.btn-ghost:hover{border-color:var(--brd2);color:var(--txt);background:var(--s2)}
+
+/* ── INFO ROW (inside card) ── */
+.info-row{display:flex;align-items:center;gap:8px;padding:11px 14px;background:rgba(61,126,246,.06);border:1px solid rgba(61,126,246,.14);border-radius:10px}
+.info-row svg{color:var(--a);flex-shrink:0;opacity:.8}
+.info-row span{font-size:12.5px;color:var(--muted);line-height:1.4}
+
+/* ── DOWNLOAD ── */
+.dl-section{width:100%;display:flex;flex-direction:column;align-items:center;gap:14px;animation:rise .4s var(--spring)}
+@keyframes rise{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+.dl-card{width:100%;background:var(--s1);border:1px solid rgba(45,186,118,.22);border-radius:24px;padding:24px 26px;display:flex;align-items:center;gap:18px;box-shadow:0 0 0 1px rgba(45,186,118,.06),0 8px 36px rgba(0,0,0,.35)}
+.dl-icon{width:52px;height:52px;background:var(--gg);border:1px solid rgba(45,186,118,.2);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--g);flex-shrink:0}
+.dl-info{flex:1;min-width:0}
 .dl-title{font-size:14.5px;font-weight:600;color:var(--txt)}
-.dl-meta{font-size:12.5px;color:var(--txt-muted);margin-top:3px}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;animation:fade 0.2s}
-@keyframes fade{from{opacity:0}to{opacity:1}}
-.modal{background:var(--surface);border:1px solid var(--border-hi);border-radius:var(--r-xl);padding:40px 34px 34px;max-width:400px;width:100%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.65);animation:pop 0.3s var(--spring)}
-@keyframes pop{from{transform:translateY(16px) scale(0.96)}to{transform:none}}
-.modal-emoji{font-size:2.4rem;margin-bottom:14px}
-.modal h2{font-family:var(--font-d);font-size:1.35rem;margin-bottom:10px}
-.modal p{font-size:13.5px;color:var(--txt-muted);line-height:1.65;margin-bottom:28px}
-.site-footer{position:relative;z-index:10;font-size:12px;color:var(--txt-faint);padding:0 24px 28px;text-align:center;letter-spacing:0.01em;line-height:1.8}
+.dl-meta{font-size:12.5px;color:var(--muted);margin-top:3px}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(10px);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;animation:fin .2s}
+@keyframes fin{from{opacity:0}to{opacity:1}}
+.modal{background:var(--s1);border:1px solid var(--brd2);border-radius:24px;padding:40px 36px 34px;max-width:400px;width:100%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.65);animation:pop .3s var(--spring)}
+@keyframes pop{from{transform:translateY(18px) scale(.96)}to{transform:none}}
+.modal-em{font-size:2.4rem;margin-bottom:14px}
+.modal h2{font-family:var(--fd);font-size:1.35rem;margin-bottom:10px;color:var(--txt)}
+.modal p{font-size:13.5px;color:var(--muted);line-height:1.65;margin-bottom:28px}
+
+/* ── FOOTER ── */
+footer{position:relative;z-index:10;font-size:11.5px;color:var(--faint);padding:0 24px 30px;text-align:center;line-height:1.9}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{color:var(--txt)}
+
 .hidden{display:none!important}
-@media(max-width:480px){.site-header{padding:20px 18px 0}.main{padding:0 18px 60px}.hero{padding:40px 0 8px}.card{padding:18px}.download-card{flex-wrap:wrap}.dl-icon{display:none}.controls{flex-direction:column}}
+
+@media(max-width:520px){
+  header{padding:22px 20px 0}
+  main{padding:0 20px 70px}
+  .hero{padding:44px 0 4px}
+  .rcard{padding:18px}
+  .stat-row{max-width:100%}
+  .dl-card{flex-wrap:wrap}
+  .dl-icon{display:none}
+  .controls{flex-direction:column}
+  .hero h1{font-size:2rem}
+}
 </style>
 </head>
 <body>
-<div class="bg-layer"></div>
+<div class="ambient"></div>
 
-<header class="site-header">
-  <div class="logo">
-    <div class="logo-mark">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2">
-        <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="#fff" stroke="none"/>
+<header>
+  <div class="brand">
+    <div class="brand-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+        <path d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.362a1 1 0 01-1.447.894L15 14"/><rect x="2" y="7" width="13" height="10" rx="2"/>
       </svg>
     </div>
-    EkranKayıt
+    <div class="brand-name">RecordFlow<sup>EDU</sup></div>
   </div>
-  <div class="badge">Ücretsiz · Kayıtsız · Sınırsız</div>
+  <div class="nav-tag">Öğrenci Platformu</div>
 </header>
 
-<main class="main">
+<main>
+  <!-- HERO -->
   <section class="hero">
-    <div class="hero-eyebrow"><span></span>Öğrenci Kayıt Aracı</div>
-    <h1 class="hero-title">Çözüm sürecini<br/><em>kaydet, paylaş.</em></h1>
-    <p class="hero-sub">Eklenti yok. Hesap yok. Sadece bir tıkla ekranını ve sesini kaydet.</p>
-    <div class="pills">
-      <div class="pill">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Sunucuya veri gönderilmez
+    <div class="hero-label"><i></i>SÜREÇ DEĞERLENDİRME PLATFORMU</div>
+    <h1>Öğrenme adımlarını görünür kıl,,<br/><em>çözüm sürecini kaydet.</em></h1>
+    <p class="hero-desc">Kurulum gerektirmeyen profesyonel ekran ve ses kayıt platformu.</p>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-val">∞</div>
+        <div class="stat-lbl">Kesintisiz İşlem</div>
       </div>
-      <div class="pill">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Süre sınırı yok
+      <div class="stat">
+        <div class="stat-val">0</div>
+        <div class="stat-lbl">Kurulum İhtiyacı</div>
       </div>
-      <div class="pill">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-        WebRTC tabanlı
+      <div class="stat">
+        <div class="stat-val">100%</div>
+        <div class="stat-lbl">Veri Güvenliği</div>
       </div>
     </div>
   </section>
 
-  <div class="card" id="recorderCard">
-    <div class="status-bar">
-      <div class="status-dot" id="statusDot"></div>
-      <span class="status-label" id="statusLabel">Kayıt başlamayı bekliyor</span>
-      <span class="timer" id="timer">00:00</span>
+  <div class="divider"></div>
+
+  <!-- RECORDER -->
+  <div class="rcard" id="rcard">
+    <!-- Status -->
+    <div class="sbar">
+      <div class="sdot" id="sdot"></div>
+      <span class="slabel" id="slabel">Kayıt bekleniyor</span>
+      <div class="audio-viz" id="aviz">
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+      <span class="stimer" id="stimer">00:00</span>
     </div>
 
-    <div class="preview-box">
-      <video id="previewVideo" muted autoplay playsinline></video>
-      <div class="preview-placeholder" id="previewPlaceholder">
-        <div class="preview-icon-wrap">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+    <!-- Preview -->
+    <div class="preview">
+      <video id="pvid" muted autoplay playsinline></video>
+      <div class="prev-empty" id="pempty">
+        <div class="prev-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
             <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
           </svg>
         </div>
-        <p>Kayıt başladığında ekran önizlemesi burada görünür</p>
+        <p>Kayıt başladığında ekranınızın önizlemesi burada görünecektir</p>
       </div>
     </div>
 
+    <!-- Controls -->
     <div class="controls">
-      <button class="btn btn-primary" id="startBtn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3.5" fill="currentColor" stroke="none"/>
+      <button class="btn btn-start" id="startBtn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/>
         </svg>
-        Kayda Başla
+        Kaydı Başlat
       </button>
-      <button class="btn btn-danger hidden" id="stopBtn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+      <button class="btn btn-stop hidden" id="stopBtn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
           <rect x="4" y="4" width="16" height="16" rx="3" fill="currentColor" stroke="none"/>
         </svg>
         Kaydı Durdur
       </button>
     </div>
 
-    <label class="mic-row" id="micRow">
-      <input type="checkbox" id="micCheck" checked />
-      <div class="mic-info">
-        <div class="mic-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/>
-            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-            <line x1="12" y1="19" x2="12" y2="22"/>
-          </svg>
-        </div>
-        <div>
-          <div class="mic-text">Mikrofon kaydını dahil et</div>
-          <div class="mic-sub">Konuşman videoyla birlikte kaydedilir</div>
-        </div>
-      </div>
-      <div class="toggle"></div>
-    </label>
+    <!-- Info -->
+    <div class="info-row" id="infoRow">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span>Kayıt başlatıldığında ekranınız ve mikrofonunuz otomatik olarak kaydedilecektir. Tüm veriler yalnızca cihazınızda saklanır.</span>
+    </div>
   </div>
 
-  <div class="download-section hidden" id="downloadSection">
-    <div class="download-card">
+  <!-- DOWNLOAD -->
+  <div class="dl-section hidden" id="dlSection">
+    <div class="dl-card">
       <div class="dl-icon">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
           <polyline points="7 10 12 15 17 10"/>
           <line x1="12" y1="15" x2="12" y2="3"/>
         </svg>
       </div>
-      <div class="dl-text">
-        <div class="dl-title">Kaydın hazır! 🎉</div>
+      <div class="dl-info">
+        <div class="dl-title">Kayıt tamamlandı</div>
         <div class="dl-meta" id="dlMeta">—</div>
       </div>
-      <a class="btn btn-success" id="downloadBtn" download="ekran-kaydi.webm">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="7 10 12 15 17 10"/>
-          <line x1="12" y1="15" x2="12" y2="3"/>
+      <a class="btn btn-dl" id="dlBtn" download="kayit.webm">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
         </svg>
         İndir
       </a>
     </div>
-    <button class="btn btn-outline" id="newRecordBtn">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <button class="btn btn-ghost" id="newBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polyline points="1 4 1 10 7 10"/>
-        <path d="M3.51 15a9 9 0 1 0 .49-4.5"/>
+        <path d="M3.51 15a9 9 0 100 .49-.49"/>
       </svg>
-      Yeni Kayıt Başlat
+      Yeni Kayıt
     </button>
   </div>
 </main>
 
-<footer class="site-footer">
-  Tamamen tarayıcınızda çalışır &nbsp;·&nbsp; Hiçbir veri sunucuya gönderilmez<br/>
-  WebRTC &amp; MediaRecorder API &nbsp;·&nbsp; Chrome · Edge · Firefox
+<footer>
+  Tüm kayıtlar yalnızca cihazınızda işlenir — hiçbir veri dış sunuculara iletilmez.<br/>
+  <a href="#">Gizlilik Politikası</a> &nbsp;·&nbsp; <a href="#">Kullanım Koşulları</a> &nbsp;·&nbsp; RecordFlow EDU © 2025
 </footer>
 
-<div class="modal-overlay hidden" id="modalOverlay">
+<!-- MODAL -->
+<div class="overlay hidden" id="overlay">
   <div class="modal">
-    <div class="modal-emoji" id="modalEmoji">⚠️</div>
-    <h2 id="modalTitle">Bir sorun oluştu</h2>
-    <p id="modalBody">Açıklama burada görünür.</p>
-    <button class="btn btn-primary" id="modalClose" style="width:100%">Tamam, anladım</button>
+    <div class="modal-em" id="mEmoji">⚠️</div>
+    <h2 id="mTitle">Bir sorun oluştu</h2>
+    <p id="mBody">Açıklama burada görünür.</p>
+    <button class="btn btn-start" id="mClose" style="width:100%">Tamam</button>
   </div>
 </div>
 
 <script>
 'use strict';
-const state={recorder:null,chunks:[],screenStream:null,micStream:null,combinedStream:null,timerInterval:null,startTime:null,eventLog:[]};
-const $=(id)=>document.getElementById(id);
-const show=(id)=>$(id).classList.remove('hidden');
-const hide=(id)=>$(id).classList.add('hidden');
+const state={recorder:null,chunks:[],screenStream:null,micStream:null,timerInterval:null,startTime:null,eventLog:[]};
+const $=id=>document.getElementById(id);
+const show=id=>$(id).classList.remove('hidden');
+const hide=id=>$(id).classList.add('hidden');
 
-function logEvent(name,detail={}){
-  const e={event:name,timestamp:new Date().toISOString(),elapsed:state.startTime?((Date.now()-state.startTime)/1000).toFixed(2)+'s':null,...detail};
+function log(name,d={}){
+  const e={event:name,ts:new Date().toISOString(),elapsed:state.startTime?((Date.now()-state.startTime)/1000).toFixed(2)+'s':null,...d};
   state.eventLog.push(e);
-  console.log('%c[EkranKayıt]','color:#4a85f5;font-weight:bold',e);
+  console.log('%c[RecordFlow]','color:#3d7ef6;font-weight:bold',e);
 }
 
-function showModal({emoji='⚠️',title='Bir sorun oluştu',body=''}){
-  $('modalEmoji').textContent=emoji;$('modalTitle').textContent=title;$('modalBody').textContent=body;show('modalOverlay');
+function modal({emoji='⚠️',title='Hata',body=''}){
+  $('mEmoji').textContent=emoji;
+  $('mTitle').textContent=title;
+  $('mBody').textContent=body;
+  show('overlay');
 }
-function closeModal(){hide('modalOverlay');}
 
 function startTimer(){
   state.startTime=Date.now();
-  $('timer').classList.add('active');
+  $('stimer').classList.add('on');
   state.timerInterval=setInterval(()=>{
     const s=Math.floor((Date.now()-state.startTime)/1000);
-    $('timer').textContent=`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+    $('stimer').textContent=`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
   },1000);
 }
-function stopTimer(){clearInterval(state.timerInterval);$('timer').classList.remove('active');}
+function stopTimer(){clearInterval(state.timerInterval);$('stimer').classList.remove('on');}
 
 function setUI(mode){
-  const dot=$('statusDot'),label=$('statusLabel'),card=$('recorderCard'),mic=$('micRow');
-  if(mode==='idle'){dot.className='status-dot';label.textContent='Kayıt başlamayı bekliyor';card.classList.remove('recording');show('startBtn');hide('stopBtn');mic.style.cssText='';}
-  if(mode==='recording'){dot.className='status-dot active';label.textContent='Kayıt devam ediyor…';card.classList.add('recording');hide('startBtn');show('stopBtn');mic.style.opacity='0.4';mic.style.pointerEvents='none';}
-  if(mode==='done'){dot.className='status-dot done';label.textContent='Kayıt tamamlandı';card.classList.remove('recording');hide('startBtn');hide('stopBtn');mic.style.cssText='';}
+  const dot=$('sdot'),lbl=$('slabel'),card=$('rcard'),aviz=$('aviz');
+  if(mode==='idle'){
+    dot.className='sdot';lbl.textContent='Kayıt bekleniyor';
+    card.classList.remove('rec');
+    show('startBtn');hide('stopBtn');
+    aviz.classList.remove('on');
+    show('infoRow');
+  }
+  if(mode==='rec'){
+    dot.className='sdot active';lbl.textContent='Kayıt devam ediyor';
+    card.classList.add('rec');
+    hide('startBtn');show('stopBtn');
+    aviz.classList.add('on');
+    hide('infoRow');
+  }
+  if(mode==='done'){
+    dot.className='sdot done';lbl.textContent='Kayıt tamamlandı';
+    card.classList.remove('rec');
+    hide('startBtn');hide('stopBtn');
+    aviz.classList.remove('on');
+    show('infoRow');
+  }
 }
 
 function getMime(){
   const c=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm;codecs=h264,opus','video/webm'];
   return c.find(t=>MediaRecorder.isTypeSupported(t))||'video/webm';
 }
-
-function datestamp(){
+function stamp(){
   const d=new Date();
   return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}`;
 }
-
 function cleanup(){
-  [state.screenStream,state.micStream,state.combinedStream].forEach(s=>{if(s)s.getTracks().forEach(t=>t.stop());});
-  state.screenStream=state.micStream=state.combinedStream=null;
+  [state.screenStream,state.micStream].forEach(s=>{if(s)s.getTracks().forEach(t=>t.stop());});
+  state.screenStream=state.micStream=null;
 }
 
 async function startRecording(){
-  logEvent('start_btn_click');
+  log('start_click');
+
+  // 1. Ekran — tüm ekran zorunlu, pencere seçimi yok
   let screenStream;
   try{
-    screenStream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:{ideal:30,max:60}},audio:true});
-    logEvent('screen_granted');
+    screenStream=await navigator.mediaDevices.getDisplayMedia({
+      video:{
+        displaySurface:'monitor',   // sadece tüm ekran
+        frameRate:{ideal:30,max:60},
+        width:{ideal:1920},height:{ideal:1080}
+      },
+      audio:true,  // sistem sesini de yakala
+      selfBrowserSurface:'exclude',
+      surfaceSwitching:'exclude',
+      systemAudio:'include',
+    });
+    log('screen_ok');
   }catch(e){
-    logEvent('screen_denied',{err:e.message});
-    showModal({emoji:'🖥️',title:'Ekran paylaşımı reddedildi',body:'Kaydı başlatmak için ekran paylaşımına izin vermen gerekiyor. Lütfen tekrar dene ve "Paylaş" butonuna tıkla.'});
+    log('screen_denied',{err:e.message});
+    // Kullanıcı pencere seçtiyse ya da reddettiyse:
+    if(e.name==='NotAllowedError'){
+      modal({emoji:'🖥️',title:'Ekran paylaşımı gerekli',body:'Kaydı başlatmak için ekran paylaşımına izin verin. Lütfen açılan pencerede ekranınızı seçip "Paylaş" butonuna tıklayın.'});
+    }else{
+      modal({emoji:'❌',title:'Bağlanamadı',body:'Ekran paylaşımı başlatılamadı: '+e.message});
+    }
     return;
   }
+
+  // 2. Mikrofon — otomatik, onay beklenmez
   let micStream=null;
-  if($('micCheck').checked){
-    try{
-      micStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true},video:false});
-      logEvent('mic_granted');
-    }catch(e){
-      logEvent('mic_denied',{err:e.message});
-      showModal({emoji:'🎙️',title:'Mikrofon erişimi reddedildi',body:'Mikrofon iznin olmadığından sadece ekran kaydedilecek. Sesli kayıt için tarayıcı ayarlarından mikrofon iznini etkinleştir.'});
-    }
+  try{
+    micStream=await navigator.mediaDevices.getUserMedia({
+      audio:{echoCancellation:true,noiseSuppression:true,sampleRate:44100},
+      video:false
+    });
+    log('mic_ok');
+  }catch(e){
+    log('mic_denied',{err:e.message});
+    // Mikrofon olmadan sessizce devam et
   }
-  const tracks=[...screenStream.getVideoTracks(),...screenStream.getAudioTracks(),...(micStream?micStream.getAudioTracks():[])];
+
+  // 3. Stream birleştir
+  const tracks=[
+    ...screenStream.getVideoTracks(),
+    ...screenStream.getAudioTracks(),
+    ...(micStream?micStream.getAudioTracks():[])
+  ];
   const combined=new MediaStream(tracks);
-  state.screenStream=screenStream;state.micStream=micStream;state.combinedStream=combined;state.chunks=[];
+  state.screenStream=screenStream;
+  state.micStream=micStream;
+  state.chunks=[];
+
+  // 4. MediaRecorder
   let recorder;
-  try{recorder=new MediaRecorder(combined,{mimeType:getMime(),videoBitsPerSecond:4000000});}
-  catch(e){
-    logEvent('recorder_init_error',{err:e.message});
-    showModal({emoji:'❌',title:'Kayıt başlatılamadı',body:'Tarayıcın bu formatı desteklemiyor. Lütfen güncel Chrome, Edge veya Firefox kullan.'});
+  try{
+    recorder=new MediaRecorder(combined,{mimeType:getMime(),videoBitsPerSecond:4_000_000});
+  }catch(e){
+    log('recorder_error',{err:e.message});
+    modal({emoji:'❌',title:'Kayıt başlatılamadı',body:'Tarayıcınız bu formatı desteklemiyor. Lütfen güncel Chrome, Edge veya Firefox kullanın.'});
     cleanup();return;
   }
-  recorder.ondataavailable=(e)=>{if(e.data?.size>0)state.chunks.push(e.data);};
+
+  recorder.ondataavailable=e=>{if(e.data?.size>0)state.chunks.push(e.data);};
   recorder.onstop=onStop;
+
+  // Kullanıcı tarayıcı üzerinden paylaşımı kapatırsa:
   screenStream.getVideoTracks()[0].addEventListener('ended',()=>{
-    logEvent('share_ended_by_user');
+    log('share_ended_by_user');
     if(state.recorder?.state==='recording')stopRecording();
   });
+
   recorder.start(1000);
   state.recorder=recorder;
-  const vid=$('previewVideo');
-  vid.srcObject=screenStream;vid.classList.add('show');
-  $('previewPlaceholder').classList.add('hidden');
-  setUI('recording');startTimer();logEvent('recording_started');
+
+  // Preview
+  const v=$('pvid');
+  v.srcObject=screenStream;
+  v.classList.add('on');
+  $('pempty').classList.add('hidden');
+
+  setUI('rec');
+  startTimer();
+  log('recording_started');
 }
 
 function stopRecording(){
-  logEvent('stop_btn_click');
+  log('stop_click');
   if(state.recorder?.state!=='inactive')state.recorder.stop();
   stopTimer();cleanup();
-  const vid=$('previewVideo');vid.srcObject=null;vid.classList.remove('show');
-  $('previewPlaceholder').classList.remove('hidden');
+  const v=$('pvid');v.srcObject=null;v.classList.remove('on');
+  $('pempty').classList.remove('hidden');
   setUI('done');
 }
 
 function onStop(){
-  const mime=getMime();
-  const blob=new Blob(state.chunks,{type:mime});
+  const blob=new Blob(state.chunks,{type:getMime()});
   const url=URL.createObjectURL(blob);
   const elapsed=state.startTime?Math.floor((Date.now()-state.startTime)/1000):0;
   const m=String(Math.floor(elapsed/60)).padStart(2,'0'),s=String(elapsed%60).padStart(2,'0');
   const mb=(blob.size/1048576).toFixed(1);
-  logEvent('recording_done',{durationSec:elapsed,sizeMB:mb});
-  $('dlMeta').textContent=`${m}:${s} dakika · ${mb} MB · WebM`;
-  const a=$('downloadBtn');a.href=url;a.download=`ekran-kaydi-${datestamp()}.webm`;
-  show('downloadSection');
+  log('done',{sec:elapsed,mb});
+  $('dlMeta').textContent=`Süre: ${m}:${s} · Boyut: ${mb} MB · WebM formatı`;
+  const a=$('dlBtn');a.href=url;a.download=`kayit-${stamp()}.webm`;
+  show('dlSection');
 }
 
 function reset(){
-  logEvent('reset');
-  const a=$('downloadBtn');
+  log('reset');
+  const a=$('dlBtn');
   if(a.href?.startsWith('blob:'))URL.revokeObjectURL(a.href);
   state.chunks=[];state.recorder=null;state.startTime=null;state.eventLog=[];
-  $('timer').textContent='00:00';hide('downloadSection');show('startBtn');setUI('idle');
+  $('stimer').textContent='00:00';
+  hide('dlSection');show('startBtn');setUI('idle');
 }
 
+// Browser check
 function checkSupport(){
   if(!navigator.mediaDevices?.getDisplayMedia||!window.MediaRecorder){
-    showModal({emoji:'🌐',title:'Tarayıcı desteklenmiyor',body:'Ekran kaydı için Chrome 72+, Edge 79+ veya Firefox 66+ gereklidir. Lütfen tarayıcını güncelle.'});
-    $('startBtn').disabled=true;return false;
+    modal({emoji:'🌐',title:'Tarayıcı desteklenmiyor',body:'Ekran kaydı için Chrome 72+, Edge 79+ veya Firefox 66+ gereklidir.'});
+    $('startBtn').disabled=true;
+    return false;
   }
   return true;
 }
@@ -370,12 +487,12 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(!checkSupport())return;
   $('startBtn').addEventListener('click',startRecording);
   $('stopBtn').addEventListener('click',stopRecording);
-  $('newRecordBtn').addEventListener('click',reset);
-  $('modalClose').addEventListener('click',closeModal);
-  $('modalOverlay').addEventListener('click',(e)=>{if(e.target===$('modalOverlay'))closeModal();});
-  document.addEventListener('keydown',(e)=>{if(e.key==='Escape')closeModal();});
-  logEvent('app_ready');
-  console.log('%cEkranKayıt hazır 🎬','color:#3ecf82;font-weight:bold');
+  $('newBtn').addEventListener('click',reset);
+  $('mClose').addEventListener('click',()=>hide('overlay'));
+  $('overlay').addEventListener('click',e=>{if(e.target===$('overlay'))hide('overlay');});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')hide('overlay');});
+  log('app_ready');
+  console.log('%cRecordFlow EDU hazır 🎬','color:#2dba76;font-weight:bold');
 });
 </script>
 </body>
