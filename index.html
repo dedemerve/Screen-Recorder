@@ -24,12 +24,10 @@
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--txt);font-family:var(--fb);font-size:15px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
 
-/* ── AMBIENT ── */
 .ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .ambient::before{content:'';position:absolute;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(61,126,246,.07) 0%,transparent 70%);top:-300px;left:50%;transform:translateX(-50%)}
 .ambient::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:52px 52px}
 
-/* ── HEADER ── */
 header{position:relative;z-index:10;width:100%;max-width:760px;padding:32px 32px 0;display:flex;align-items:center;justify-content:space-between}
 .brand{display:flex;align-items:center;gap:11px}
 .brand-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--a),#6b5ef8);border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px var(--ag);flex-shrink:0}
@@ -37,10 +35,8 @@ header{position:relative;z-index:10;width:100%;max-width:760px;padding:32px 32px
 .brand-name sup{font-family:var(--fb);font-size:9px;font-weight:600;color:var(--a);letter-spacing:.06em;text-transform:uppercase;vertical-align:super;margin-left:3px}
 .nav-tag{font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--s1);border:1px solid var(--brd);padding:6px 14px;border-radius:99px}
 
-/* ── MAIN ── */
 main{position:relative;z-index:10;width:100%;max-width:760px;padding:0 32px 90px;display:flex;flex-direction:column;align-items:center;gap:28px}
 
-/* ── HERO ── */
 .hero{width:100%;text-align:center;padding:64px 0 4px;display:flex;flex-direction:column;align-items:center;gap:0}
 .hero-label{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--a);margin-bottom:22px;padding:5px 14px;background:rgba(61,126,246,.08);border:1px solid rgba(61,126,246,.18);border-radius:99px}
 .hero-label i{width:5px;height:5px;border-radius:50%;background:var(--a);flex-shrink:0;animation:glow 2s ease-in-out infinite}
@@ -49,31 +45,32 @@ main{position:relative;z-index:10;width:100%;max-width:760px;padding:0 32px 90px
 .hero h1 em{font-style:italic;background:linear-gradient(135deg,var(--ah),#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero-desc{font-size:16px;color:var(--muted);font-weight:300;max-width:420px;line-height:1.75;margin-bottom:36px}
 
-/* ── STAT ROW ── */
 .stat-row{display:flex;align-items:center;gap:0;background:var(--s1);border:1px solid var(--brd);border-radius:14px;overflow:hidden;margin-bottom:0;width:100%;max-width:480px}
 .stat{flex:1;padding:16px 20px;text-align:center;border-right:1px solid var(--brd)}
 .stat:last-child{border-right:none}
 .stat-val{font-family:var(--fd);font-size:1.5rem;color:var(--txt);line-height:1}
 .stat-lbl{font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:.02em}
 
-/* ── DIVIDER ── */
+/* Canlı sayaç hücresi */
+.stat-live .stat-val{color:var(--d);display:flex;align-items:center;justify-content:center;gap:6px}
+.stat-live .live-dot{width:6px;height:6px;border-radius:50%;background:var(--d);flex-shrink:0;animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 2px var(--dg)}50%{box-shadow:0 0 0 6px rgba(232,69,90,.04)}}
+.stat-live.idle .stat-val{color:var(--muted)}
+.stat-live.idle .live-dot{background:var(--faint);animation:none;box-shadow:none}
+
 .divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--brd2),transparent);margin:4px 0}
 
-/* ── RECORDER CARD ── */
 .rcard{width:100%;background:var(--s1);border:1px solid var(--brd);border-radius:24px;padding:28px;box-shadow:0 12px 48px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:22px;transition:border-color .3s var(--ease),box-shadow .3s var(--ease)}
 .rcard.rec{border-color:rgba(232,69,90,.28);box-shadow:0 12px 48px rgba(0,0,0,.45),0 0 0 1px rgba(232,69,90,.1),0 0 48px rgba(232,69,90,.05)}
 
-/* ── STATUS BAR ── */
 .sbar{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--s2);border:1px solid var(--brd);border-radius:12px}
 .sdot{width:8px;height:8px;border-radius:50%;background:var(--faint);flex-shrink:0;transition:all .3s var(--ease)}
 .sdot.active{background:var(--d);box-shadow:0 0 0 3px var(--dg);animation:pulse 1.6s ease-in-out infinite}
 .sdot.done{background:var(--g);box-shadow:0 0 0 3px var(--gg)}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 3px var(--dg)}50%{box-shadow:0 0 0 8px rgba(232,69,90,.04)}}
 .slabel{flex:1;font-size:12.5px;font-weight:500;color:var(--muted)}
 .stimer{font-family:var(--fd);font-size:15px;color:var(--faint);letter-spacing:.07em;transition:color .3s;min-width:42px;text-align:right}
 .stimer.on{color:var(--d)}
 
-/* ── PREVIEW ── */
 .preview{width:100%;aspect-ratio:16/9;background:var(--s2);border:1px solid var(--brd);border-radius:16px;overflow:hidden;position:relative}
 .preview video{width:100%;height:100%;object-fit:contain;display:none}
 .preview video.on{display:block}
@@ -81,7 +78,6 @@ main{position:relative;z-index:10;width:100%;max-width:760px;padding:0 32px 90px
 .prev-icon{width:64px;height:64px;background:var(--s3);border:1px solid var(--brd);border-radius:16px;display:flex;align-items:center;justify-content:center;opacity:.5}
 .prev-empty p{font-size:13px;color:var(--muted);opacity:.5;max-width:240px;text-align:center;line-height:1.5}
 
-/* ── AUDIO VIZ ── */
 .audio-viz{display:none;align-items:center;justify-content:center;gap:3px;height:32px}
 .audio-viz.on{display:flex}
 .bar{width:3px;border-radius:99px;background:var(--d);opacity:.7;transform-origin:bottom;animation:wavebar 1s ease-in-out infinite}
@@ -94,7 +90,6 @@ main{position:relative;z-index:10;width:100%;max-width:760px;padding:0 32px 90px
 .bar:nth-child(7){height:10px;animation-delay:.08s}
 @keyframes wavebar{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
 
-/* ── CONTROLS ── */
 .controls{display:flex;gap:10px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-size:14px;font-weight:600;border:none;border-radius:10px;cursor:pointer;padding:13px 22px;transition:all .2s var(--ease);letter-spacing:.01em;text-decoration:none;white-space:nowrap;position:relative}
 .btn:active{transform:scale(.97)}
@@ -108,12 +103,10 @@ main{position:relative;z-index:10;width:100%;max-width:760px;padding:0 32px 90px
 .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--brd);padding:11px 20px;font-size:13.5px;font-weight:500}
 .btn-ghost:hover{border-color:var(--brd2);color:var(--txt);background:var(--s2)}
 
-/* ── INFO ROW (inside card) ── */
 .info-row{display:flex;align-items:center;gap:8px;padding:11px 14px;background:rgba(61,126,246,.06);border:1px solid rgba(61,126,246,.14);border-radius:10px}
 .info-row svg{color:var(--a);flex-shrink:0;opacity:.8}
 .info-row span{font-size:12.5px;color:var(--muted);line-height:1.4}
 
-/* ── DOWNLOAD ── */
 .dl-section{width:100%;display:flex;flex-direction:column;align-items:center;gap:14px;animation:rise .4s var(--spring)}
 @keyframes rise{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
 .dl-card{width:100%;background:var(--s1);border:1px solid rgba(45,186,118,.22);border-radius:24px;padding:24px 26px;display:flex;align-items:center;gap:18px;box-shadow:0 0 0 1px rgba(45,186,118,.06),0 8px 36px rgba(0,0,0,.35)}
@@ -122,7 +115,6 @@ main{position:relative;z-index:10;width:100%;max-width:760px;padding:0 32px 90px
 .dl-title{font-size:14.5px;font-weight:600;color:var(--txt)}
 .dl-meta{font-size:12.5px;color:var(--muted);margin-top:3px}
 
-/* ── MODAL ── */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(10px);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;animation:fin .2s}
 @keyframes fin{from{opacity:0}to{opacity:1}}
 .modal{background:var(--s1);border:1px solid var(--brd2);border-radius:24px;padding:40px 36px 34px;max-width:400px;width:100%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.65);animation:pop .3s var(--spring)}
@@ -131,7 +123,6 @@ main{position:relative;z-index:10;width:100%;max-width:760px;padding:0 32px 90px
 .modal h2{font-family:var(--fd);font-size:1.35rem;margin-bottom:10px;color:var(--txt)}
 .modal p{font-size:13.5px;color:var(--muted);line-height:1.65;margin-bottom:28px}
 
-/* ── FOOTER ── */
 footer{position:relative;z-index:10;font-size:11.5px;color:var(--faint);padding:0 24px 30px;text-align:center;line-height:1.9}
 footer a{color:var(--muted);text-decoration:none}
 footer a:hover{color:var(--txt)}
@@ -167,7 +158,6 @@ footer a:hover{color:var(--txt)}
 </header>
 
 <main>
-  <!-- HERO -->
   <section class="hero">
     <div class="hero-label"><i></i>EKRAN KAYDINI BAŞLATIN</div>
     <h1>Süreçlerinizi kaydedin,<br/>
@@ -184,17 +174,23 @@ footer a:hover{color:var(--txt)}
         <div class="stat-lbl">Kurulum İhtiyacı</div>
       </div>
       <div class="stat">
-        <div class="stat-val">100%</div>
+        <div class="stat-val">%100</div>
         <div class="stat-lbl">Veri Güvenliği</div>
+      </div>
+      <!-- CANLI SAYAÇ -->
+      <div class="stat stat-live idle" id="statLive">
+        <div class="stat-val">
+          <span class="live-dot"></span>
+          <span id="liveCount">0</span>
+        </div>
+        <div class="stat-lbl">Şu An Kayıtta</div>
       </div>
     </div>
   </section>
 
   <div class="divider"></div>
 
-  <!-- RECORDER -->
   <div class="rcard" id="rcard">
-    <!-- Status -->
     <div class="sbar">
       <div class="sdot" id="sdot"></div>
       <span class="slabel" id="slabel">Kayıt bekleniyor</span>
@@ -206,7 +202,6 @@ footer a:hover{color:var(--txt)}
       <span class="stimer" id="stimer">00:00</span>
     </div>
 
-    <!-- Preview -->
     <div class="preview">
       <video id="pvid" muted autoplay playsinline></video>
       <div class="prev-empty" id="pempty">
@@ -219,7 +214,6 @@ footer a:hover{color:var(--txt)}
       </div>
     </div>
 
-    <!-- Controls -->
     <div class="controls">
       <button class="btn btn-start" id="startBtn">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
@@ -235,16 +229,14 @@ footer a:hover{color:var(--txt)}
       </button>
     </div>
 
-    <!-- Info -->
     <div class="info-row" id="infoRow">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
       </svg>
-      <span>Kayıt başlatıldığında ekranınız ve mikrofonunuz otomatik olarak kaydedilecektir. Tüm veriler yalnızca cihazınızda saklanır.</span>
+      <span>Kayıt başlatıldığında ekranınız ve mikrofonunuz otomatik olarak kaydedilecektir. Tüm veriler yalnızca bilgisayarınızda saklanır.</span>
     </div>
   </div>
 
-  <!-- DOWNLOAD -->
   <div class="dl-section hidden" id="dlSection">
     <div class="dl-card">
       <div class="dl-icon">
@@ -280,7 +272,6 @@ footer a:hover{color:var(--txt)}
   <a href="#">Gizlilik Politikası</a> &nbsp;·&nbsp; <a href="#">Kullanım Koşulları</a> &nbsp;·&nbsp; RecordFlow EDU © 2026
 </footer>
 
-<!-- MODAL -->
 <div class="overlay hidden" id="overlay">
   <div class="modal">
     <div class="modal-em" id="mEmoji">⚠️</div>
@@ -292,13 +283,82 @@ footer a:hover{color:var(--txt)}
 
 <script>
 'use strict';
-const state={recorder:null,chunks:[],screenStream:null,micStream:null,timerInterval:null,startTime:null,eventLog:[]};
+
+/* ── OTURUM KİMLİĞİ ── */
+const SESSION_ID = Math.random().toString(36).slice(2) + Date.now().toString(36);
+const REC_PREFIX = 'rec:';
+const STALE_MS   = 30000;   // 30 sn yanıt vermeyeni "çevrimdışı" say
+const BEAT_MS    = 12000;   // 12 sn'de bir "ben hâlâ kayıttayım" gönder
+const POLL_MS    = 5000;    // 5 sn'de bir sayacı yenile
+
+/* ── PAYLAŞIMLI DEPO YARDIMCILARI ── */
+/* window.storage yoksa (artifact dışında açıldıysa) localStorage fallback */
+const store = window.storage ?? {
+  _d: {},
+  async set(k,v){ this._d[k]=v; return {key:k,value:v}; },
+  async get(k)  { return k in this._d ? {key:k,value:this._d[k]} : null; },
+  async delete(k){ delete this._d[k]; return {key:k,deleted:true}; },
+  async list(pfx){ return {keys:Object.keys(this._d).filter(k=>k.startsWith(pfx||''))}; }
+};
+const SHARED = !!window.storage; // true → gerçekten paylaşımlı
+
+async function heartbeat(){
+  try{
+    await store.set(REC_PREFIX + SESSION_ID, JSON.stringify({ts:Date.now()}), SHARED);
+  }catch(e){}
+}
+
+async function unregister(){
+  try{
+    await store.delete(REC_PREFIX + SESSION_ID, SHARED);
+  }catch(e){}
+}
+
+async function countActive(){
+  try{
+    const list = await store.list(REC_PREFIX, SHARED);
+    if(!list?.keys?.length) return 0;
+    let n = 0;
+    const now = Date.now();
+    for(const key of list.keys){
+      try{
+        const r = await store.get(key, SHARED);
+        if(!r) continue;
+        const d = JSON.parse(r.value);
+        if(now - d.ts < STALE_MS) n++;
+      }catch(_){}
+    }
+    return n;
+  }catch(e){ return 0; }
+}
+
+/* ── SAYAÇ UI ── */
+function updateCounter(n){
+  const el   = document.getElementById('liveCount');
+  const cell = document.getElementById('statLive');
+  el.textContent = n;
+  cell.classList.toggle('idle', n === 0);
+}
+
+let pollInterval = null;
+function startPolling(){
+  if(pollInterval) return;
+  pollInterval = setInterval(async()=>{
+    updateCounter(await countActive());
+  }, POLL_MS);
+}
+
+/* ── MEVCUT UYGULAMA ── */
+const state={recorder:null,chunks:[],screenStream:null,micStream:null,
+             timerInterval:null,startTime:null,eventLog:[],
+             beatInterval:null};
 const $=id=>document.getElementById(id);
 const show=id=>$(id).classList.remove('hidden');
 const hide=id=>$(id).classList.add('hidden');
 
 function log(name,d={}){
-  const e={event:name,ts:new Date().toISOString(),elapsed:state.startTime?((Date.now()-state.startTime)/1000).toFixed(2)+'s':null,...d};
+  const e={event:name,ts:new Date().toISOString(),
+           elapsed:state.startTime?((Date.now()-state.startTime)/1000).toFixed(2)+'s':null,...d};
   state.eventLog.push(e);
   console.log('%c[RecordFlow]','color:#3d7ef6;font-weight:bold',e);
 }
@@ -315,7 +375,8 @@ function startTimer(){
   $('stimer').classList.add('on');
   state.timerInterval=setInterval(()=>{
     const s=Math.floor((Date.now()-state.startTime)/1000);
-    $('stimer').textContent=`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+    $('stimer').textContent=
+      `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
   },1000);
 }
 function stopTimer(){clearInterval(state.timerInterval);$('stimer').classList.remove('on');}
@@ -326,51 +387,48 @@ function setUI(mode){
     dot.className='sdot';lbl.textContent='Kayıt bekleniyor';
     card.classList.remove('rec');
     show('startBtn');hide('stopBtn');
-    aviz.classList.remove('on');
-    show('infoRow');
+    aviz.classList.remove('on');show('infoRow');
   }
   if(mode==='rec'){
     dot.className='sdot active';lbl.textContent='Kayıt devam ediyor';
     card.classList.add('rec');
     hide('startBtn');show('stopBtn');
-    aviz.classList.add('on');
-    hide('infoRow');
+    aviz.classList.add('on');hide('infoRow');
   }
   if(mode==='done'){
     dot.className='sdot done';lbl.textContent='Kayıt tamamlandı';
     card.classList.remove('rec');
     hide('startBtn');hide('stopBtn');
-    aviz.classList.remove('on');
-    show('infoRow');
+    aviz.classList.remove('on');show('infoRow');
   }
 }
 
 function getMime(){
-  const c=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm;codecs=h264,opus','video/webm'];
+  const c=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus',
+           'video/webm;codecs=h264,opus','video/webm'];
   return c.find(t=>MediaRecorder.isTypeSupported(t))||'video/webm';
 }
 function stamp(){
   const d=new Date();
-  return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}`;
+  return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}` +
+         `${String(d.getDate()).padStart(2,'0')}-` +
+         `${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}`;
 }
 function cleanup(){
-  [state.screenStream,state.micStream].forEach(s=>{if(s)s.getTracks().forEach(t=>t.stop());});
+  [state.screenStream,state.micStream].forEach(s=>{
+    if(s)s.getTracks().forEach(t=>t.stop());
+  });
   state.screenStream=state.micStream=null;
 }
 
 async function startRecording(){
   log('start_click');
-
-  // 1. Ekran — tüm ekran zorunlu, pencere seçimi yok
   let screenStream;
   try{
     screenStream=await navigator.mediaDevices.getDisplayMedia({
-      video:{
-        displaySurface:'monitor',   // sadece tüm ekran
-        frameRate:{ideal:30,max:60},
-        width:{ideal:1920},height:{ideal:1080}
-      },
-      audio:true,  // sistem sesini de yakala
+      video:{displaySurface:'monitor',frameRate:{ideal:30,max:60},
+             width:{ideal:1920},height:{ideal:1080}},
+      audio:true,
       selfBrowserSurface:'exclude',
       surfaceSwitching:'exclude',
       systemAudio:'include',
@@ -378,29 +436,23 @@ async function startRecording(){
     log('screen_ok');
   }catch(e){
     log('screen_denied',{err:e.message});
-    // Kullanıcı pencere seçtiyse ya da reddettiyse:
     if(e.name==='NotAllowedError'){
-      modal({emoji:'🖥️',title:'Ekran paylaşımı gerekli',body:'Kaydı başlatmak için ekran paylaşımına izin verin. Lütfen açılan pencerede ekranınızı seçip "Paylaş" butonuna tıklayın.'});
+      modal({emoji:'🖥️',title:'Ekran paylaşımı gerekli',
+             body:'Kaydı başlatmak için ekran paylaşımına izin verin. Lütfen açılan pencerede ekranınızı seçip "Paylaş" butonuna tıklayın.'});
     }else{
       modal({emoji:'❌',title:'Bağlanamadı',body:'Ekran paylaşımı başlatılamadı: '+e.message});
     }
     return;
   }
 
-  // 2. Mikrofon — otomatik, onay beklenmez
   let micStream=null;
   try{
     micStream=await navigator.mediaDevices.getUserMedia({
-      audio:{echoCancellation:true,noiseSuppression:true,sampleRate:44100},
-      video:false
+      audio:{echoCancellation:true,noiseSuppression:true,sampleRate:44100},video:false
     });
     log('mic_ok');
-  }catch(e){
-    log('mic_denied',{err:e.message});
-    // Mikrofon olmadan sessizce devam et
-  }
+  }catch(e){log('mic_denied',{err:e.message});}
 
-  // 3. Stream birleştir
   const tracks=[
     ...screenStream.getVideoTracks(),
     ...screenStream.getAudioTracks(),
@@ -411,20 +463,19 @@ async function startRecording(){
   state.micStream=micStream;
   state.chunks=[];
 
-  // 4. MediaRecorder
   let recorder;
   try{
     recorder=new MediaRecorder(combined,{mimeType:getMime(),videoBitsPerSecond:4_000_000});
   }catch(e){
     log('recorder_error',{err:e.message});
-    modal({emoji:'❌',title:'Kayıt başlatılamadı',body:'Tarayıcınız bu formatı desteklemiyor. Lütfen güncel Chrome, Edge veya Firefox kullanın.'});
+    modal({emoji:'❌',title:'Kayıt başlatılamadı',
+           body:'Tarayıcınız bu formatı desteklemiyor. Lütfen güncel Chrome, Edge veya Firefox kullanın.'});
     cleanup();return;
   }
 
   recorder.ondataavailable=e=>{if(e.data?.size>0)state.chunks.push(e.data);};
   recorder.onstop=onStop;
 
-  // Kullanıcı tarayıcı üzerinden paylaşımı kapatırsa:
   screenStream.getVideoTracks()[0].addEventListener('ended',()=>{
     log('share_ended_by_user');
     if(state.recorder?.state==='recording')stopRecording();
@@ -433,21 +484,30 @@ async function startRecording(){
   recorder.start(1000);
   state.recorder=recorder;
 
-  // Preview
+  /* PAYLAŞIMLI DEPOYA KAYIT */
+  await heartbeat();
+  state.beatInterval=setInterval(heartbeat, BEAT_MS);
+  updateCounter(await countActive());
+
   const v=$('pvid');
-  v.srcObject=screenStream;
-  v.classList.add('on');
+  v.srcObject=screenStream;v.classList.add('on');
   $('pempty').classList.add('hidden');
 
-  setUI('rec');
-  startTimer();
+  setUI('rec');startTimer();
   log('recording_started');
 }
 
-function stopRecording(){
+async function stopRecording(){
   log('stop_click');
   if(state.recorder?.state!=='inactive')state.recorder.stop();
   stopTimer();cleanup();
+
+  /* PAYLAŞIMLI DEPODAN SİL */
+  clearInterval(state.beatInterval);
+  state.beatInterval=null;
+  await unregister();
+  updateCounter(await countActive());
+
   const v=$('pvid');v.srcObject=null;v.classList.remove('on');
   $('pempty').classList.remove('hidden');
   setUI('done');
@@ -465,7 +525,7 @@ function onStop(){
   show('dlSection');
 }
 
-function reset(){
+async function reset(){
   log('reset');
   const a=$('dlBtn');
   if(a.href?.startsWith('blob:'))URL.revokeObjectURL(a.href);
@@ -474,15 +534,24 @@ function reset(){
   hide('dlSection');show('startBtn');setUI('idle');
 }
 
-// Browser check
 function checkSupport(){
   if(!navigator.mediaDevices?.getDisplayMedia||!window.MediaRecorder){
-    modal({emoji:'🌐',title:'Tarayıcı desteklenmiyor',body:'Ekran kaydı için Chrome 72+, Edge 79+ veya Firefox 66+ gereklidir.'});
-    $('startBtn').disabled=true;
-    return false;
+    modal({emoji:'🌐',title:'Tarayıcı desteklenmiyor',
+           body:'Ekran kaydı için Chrome 72+, Edge 79+ veya Firefox 66+ gereklidir.'});
+    $('startBtn').disabled=true;return false;
   }
   return true;
 }
+
+/* Sayfa kapanırken kaydı depodan kaldır */
+window.addEventListener('beforeunload',()=>{
+  if(state.beatInterval){
+    clearInterval(state.beatInterval);
+    /* Senkron silme imkânı yok; heartbeat süresi dolunca otomatik düşer */
+    navigator.sendBeacon && navigator.sendBeacon('');   /* no-op, tarayıcıyı tutmak için */
+    unregister();
+  }
+});
 
 document.addEventListener('DOMContentLoaded',()=>{
   if(!checkSupport())return;
@@ -492,6 +561,15 @@ document.addEventListener('DOMContentLoaded',()=>{
   $('mClose').addEventListener('click',()=>hide('overlay'));
   $('overlay').addEventListener('click',e=>{if(e.target===$('overlay'))hide('overlay');});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')hide('overlay');});
+
+  /* İlk sayım + periyodik güncelleme */
+  countActive().then(updateCounter);
+  startPolling();
+
+  if(!SHARED){
+    console.warn('[RecordFlow] window.storage bulunamadı. Sayaç yalnızca bu sekme için çalışır.');
+  }
+
   log('app_ready');
   console.log('%cRecordFlow EDU hazır 🎬','color:#2dba76;font-weight:bold');
 });
