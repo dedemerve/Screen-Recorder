@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>RecordFlow — Öğretmen Paneli</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08090d;--s1:#0f1117;--s2:#141720;
+  --brd:rgba(255,255,255,0.06);--brd2:rgba(255,255,255,0.11);
+  --txt:#dde2f0;--muted:#5a6180;--faint:#272c3c;
+  --a:#3d7ef6;--ag:rgba(61,126,246,0.15);
+  --d:#e8455a;--dg:rgba(232,69,90,0.14);
+  --g:#2dba76;--gg:rgba(45,186,118,0.13);
+  --fd:'Instrument Serif',Georgia,serif;
+  --fb:'Inter',system-ui,sans-serif;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:var(--fb);font-size:15px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.ambient::before{content:'';position:absolute;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(45,186,118,.06) 0%,transparent 70%);top:-300px;left:50%;transform:translateX(-50%)}
+.ambient::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:52px 52px}
+
+.panel{position:relative;z-index:10;width:100%;max-width:520px;padding:32px;display:flex;flex-direction:column;align-items:center;gap:32px}
+
+/* header */
+.brand{display:flex;align-items:center;gap:11px;margin-bottom:8px}
+.brand-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--g),#0f6e56);border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px var(--gg);flex-shrink:0}
+.brand-name{font-family:var(--fd);font-size:1.18rem;letter-spacing:-.01em;color:var(--txt)}
+.brand-name sup{font-family:var(--fb);font-size:9px;font-weight:600;color:var(--g);letter-spacing:.06em;text-transform:uppercase;vertical-align:super;margin-left:3px}
+
+/* main card */
+.main-card{width:100%;background:var(--s1);border:1px solid var(--brd);border-radius:28px;padding:40px 32px;display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:0 16px 64px rgba(0,0,0,.5);transition:border-color .4s var(--ease),box-shadow .4s var(--ease)}
+.main-card.active{border-color:rgba(45,186,118,.3);box-shadow:0 16px 64px rgba(0,0,0,.5),0 0 0 1px rgba(45,186,118,.1),0 0 60px rgba(45,186,118,.06)}
+
+.status-pill{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:6px 16px;border-radius:99px;background:var(--s2);border:1px solid var(--brd);color:var(--muted);transition:all .4s var(--ease);margin-bottom:8px}
+.status-pill.active{background:rgba(45,186,118,.08);border-color:rgba(45,186,118,.22);color:var(--g)}
+.status-pill.active .dot{background:var(--g);animation:pulse 1.6s ease-in-out infinite}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--faint);transition:all .4s;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.count-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+.count{font-family:var(--fd);font-size:clamp(5rem,18vw,8rem);line-height:1;color:var(--txt);transition:color .4s var(--ease),transform .3s var(--ease)}
+.count.active{color:var(--g)}
+.count.bump{transform:scale(1.06)}
+.count-label{font-size:14px;color:var(--muted);font-weight:300;letter-spacing:.02em}
+
+/* stats row */
+.stats{display:flex;gap:0;width:100%;background:var(--s2);border:1px solid var(--brd);border-radius:14px;overflow:hidden;margin-top:8px}
+.s-item{flex:1;padding:14px 16px;text-align:center;border-right:1px solid var(--brd)}
+.s-item:last-child{border-right:none}
+.s-val{font-family:var(--fd);font-size:1.3rem;color:var(--txt);line-height:1}
+.s-val.green{color:var(--g)}
+.s-lbl{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* connection badge */
+.conn{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.conn-dot{width:7px;height:7px;border-radius:50%;background:var(--faint);transition:background .4s}
+.conn-dot.ok{background:var(--g)}
+.conn-dot.err{background:var(--d);animation:pulse 1s ease-in-out infinite}
+
+/* refresh info */
+.refresh-note{font-size:11.5px;color:var(--faint);text-align:center}
+
+/* log */
+.log-card{width:100%;background:var(--s1);border:1px solid var(--brd);border-radius:18px;overflow:hidden}
+.log-header{padding:14px 18px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between}
+.log-title{font-size:12.5px;font-weight:500;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.log-clear{font-size:11px;color:var(--faint);cursor:pointer;padding:4px 10px;border-radius:6px;background:transparent;border:1px solid var(--brd);font-family:var(--fb);transition:all .2s}
+.log-clear:hover{color:var(--txt);border-color:var(--brd2)}
+.log-body{padding:0;max-height:180px;overflow-y:auto}
+.log-entry{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid var(--brd);font-size:12.5px;animation:slideIn .3s var(--ease)}
+.log-entry:last-child{border-bottom:none}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.log-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.log-dot.up{background:var(--g)}
+.log-dot.dn{background:var(--d)}
+.log-time{font-size:11px;color:var(--faint);min-width:40px}
+.log-txt{color:var(--muted);flex:1}
+.log-empty{padding:24px 18px;font-size:12.5px;color:var(--faint);text-align:center}
+</style>
+</head>
+<body>
+<div class="ambient"></div>
+<div class="panel">
+  <div class="brand">
+    <div class="brand-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+        <path d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.362a1 1 0 01-1.447.894L15 14"/><rect x="2" y="7" width="13" height="10" rx="2"/>
+      </svg>
+    </div>
+    <div class="brand-name">RecordFlow<sup>ÖĞRETMen</sup></div>
+  </div>
+
+  <div class="main-card" id="mainCard">
+    <div class="status-pill" id="statusPill">
+      <div class="dot"></div>
+      <span id="statusTxt">Bekleniyor</span>
+    </div>
+    <div class="count-wrap">
+      <div class="count" id="count">—</div>
+      <div class="count-label">şu an kayıt yapan öğrenci</div>
+    </div>
+    <div class="stats">
+      <div class="s-item">
+        <div class="s-val" id="statMax">—</div>
+        <div class="s-lbl">Zirve (oturum)</div>
+      </div>
+      <div class="s-item">
+        <div class="s-val" id="statTotal">—</div>
+        <div class="s-lbl">Toplam başlatma</div>
+      </div>
+      <div class="s-item">
+        <div class="s-val" id="statLast">—</div>
+        <div class="s-lbl">Son güncelleme</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="conn">
+    <div class="conn-dot" id="connDot"></div>
+    <span id="connTxt">Bağlanıyor...</span>
+    <span style="color:var(--faint)">·</span>
+    <span class="refresh-note">3 saniyede bir yenilenir</span>
+  </div>
+
+  <div class="log-card">
+    <div class="log-header">
+      <span class="log-title">Etkinlik Günlüğü</span>
+      <button class="log-clear" id="logClear">Temizle</button>
+    </div>
+    <div class="log-body" id="logBody">
+      <div class="log-empty" id="logEmpty">Henüz etkinlik yok</div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const SUPABASE_URL = 'https://yyxnhkxabfbnubvrczlf.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5eG5oa3hhYmZibnVidnJjemxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMDM1NzEsImV4cCI6MjA5MTY3OTU3MX0.ZPYwk5DZJwkn2qLYNpsdWkzLfdeO-bvJOGvdn9cCNHk';
+
+const $ = id => document.getElementById(id);
+
+let prevCount = null;
+let sessionMax = 0;
+let sessionTotal = 0;
+
+function fmt(d) {
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+}
+
+function addLog(type, txt) {
+  const empty = $('logEmpty');
+  if (empty) empty.remove();
+  const body = $('logBody');
+  const el = document.createElement('div');
+  el.className = 'log-entry';
+  el.innerHTML = `<div class="log-dot ${type}"></div><span class="log-time">${fmt(new Date())}</span><span class="log-txt">${txt}</span>`;
+  body.insertBefore(el, body.firstChild);
+  // max 30 entry
+  while (body.children.length > 30) body.removeChild(body.lastChild);
+}
+
+function setConnected(ok) {
+  $('connDot').className = 'conn-dot ' + (ok ? 'ok' : 'err');
+  $('connTxt').textContent = ok ? 'Canlı bağlantı aktif' : 'Bağlantı hatası — yeniden deneniyor';
+}
+
+async function fetchCount() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/recorder_count?id=eq.1&select=active`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const n = data?.[0]?.active ?? 0;
+    setConnected(true);
+    updateUI(n);
+  } catch (e) {
+    setConnected(false);
+  }
+}
+
+function updateUI(n) {
+  const countEl = $('count');
+  const now = new Date();
+
+  // Değişim varsa log ve bump
+  if (prevCount !== null && n !== prevCount) {
+    const diff = n - prevCount;
+    if (diff > 0) {
+      addLog('up', `${diff} öğrenci kaydı başlattı → toplam ${n}`);
+      sessionTotal += diff;
+    } else {
+      addLog('dn', `${Math.abs(diff)} öğrenci kaydı durdurdu → toplam ${n}`);
+    }
+    countEl.classList.add('bump');
+    setTimeout(() => countEl.classList.remove('bump'), 300);
+    $('statTotal').textContent = sessionTotal;
+  }
+
+  if (prevCount === null) {
+    sessionTotal = 0;
+    $('statTotal').textContent = '0';
+  }
+
+  prevCount = n;
+
+  // Zirve
+  if (n > sessionMax) {
+    sessionMax = n;
+    $('statMax').textContent = sessionMax;
+    $('statMax').className = 's-val green';
+  }
+
+  // Count rengi
+  countEl.textContent = n;
+  countEl.className = 'count' + (n > 0 ? ' active' : '');
+
+  // Card
+  const card = $('mainCard');
+  card.className = 'main-card' + (n > 0 ? ' active' : '');
+
+  // Status pill
+  const pill = $('statusPill');
+  const dot = pill.querySelector('.dot');
+  if (n > 0) {
+    pill.className = 'status-pill active';
+    $('statusTxt').textContent = `${n} öğrenci aktif`;
+  } else {
+    pill.className = 'status-pill';
+    $('statusTxt').textContent = 'Bekleniyor';
+  }
+
+  // Son güncelleme
+  $('statLast').textContent = fmt(now);
+}
+
+// İlk yükleme
+fetchCount();
+// Her 3 sn
+setInterval(fetchCount, 3000);
+
+$('logClear').addEventListener('click', () => {
+  $('logBody').innerHTML = '<div class="log-empty" id="logEmpty">Henüz etkinlik yok</div>';
+});
+</script>
+</body>
+</html>
